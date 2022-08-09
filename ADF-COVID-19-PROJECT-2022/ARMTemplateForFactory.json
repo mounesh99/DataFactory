@@ -142,7 +142,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": ".",
 						"folderPath": "Output",
 						"container": "population"
 					},
