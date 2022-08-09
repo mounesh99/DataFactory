@@ -142,7 +142,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "Demo",
+						"fileName": "Demo.txt",
 						"folderPath": "Output",
 						"container": "population"
 					},
