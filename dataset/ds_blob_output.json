@@ -12,7 +12,7 @@
 				"type": "AzureBlobStorageLocation",
 				"fileName": ".",
 				"folderPath": "Output",
-				"container": "raw"
+				"container": "population"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
