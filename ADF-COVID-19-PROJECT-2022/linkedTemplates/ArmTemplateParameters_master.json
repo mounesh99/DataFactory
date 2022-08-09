@@ -8,6 +8,9 @@
 		"ls_blob_covid_project_accountKey": {
 			"value": ""
 		},
+		"ls_covid_project_connectionString": {
+			"value": ""
+		},
 		"ls_blob_covid_project_properties_typeProperties_url": {
 			"value": "https://saadfcovid19.dfs.core.windows.net/"
 		},

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_blob_covid_project'"
 		},
+		"ls_covid_project_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_covid_project'"
+		},
 		"ls_blob_covid_project_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://saadfcovid19.dfs.core.windows.net/"
@@ -44,6 +48,9 @@
 					},
 					"ls_blob_covid_project_accountKey": {
 						"value": "[parameters('ls_blob_covid_project_accountKey')]"
+					},
+					"ls_covid_project_connectionString": {
+						"value": "[parameters('ls_covid_project_connectionString')]"
 					},
 					"ls_blob_covid_project_properties_typeProperties_url": {
 						"value": "[parameters('ls_blob_covid_project_properties_typeProperties_url')]"
