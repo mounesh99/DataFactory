@@ -1,0 +1,9 @@
+{
+	"name": "adf-dataingestion-udemy",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1577066d-7d87-43db-a71f-99d10a3b4536",
+		"tenantId": "17b0ec34-3ece-46d5-aa74-0732c9a52bb9"
+	}
+}
