@@ -11,6 +11,9 @@
 		"LS_adls_data_engineering_accountKey": {
 			"value": ""
 		},
+		"LS_asql_data_engineeering_metadat_connectionString": {
+			"value": ""
+		},
 		"ls_webstpre_gen2_accountKey": {
 			"value": ""
 		},

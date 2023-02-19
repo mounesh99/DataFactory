@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS_adls_data_engineering'"
 		},
+		"LS_asql_data_engineeering_metadat_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_asql_data_engineeering_metadat'"
+		},
 		"ls_webstpre_gen2_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_webstpre_gen2'"
@@ -101,7 +105,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json_copy1')]",
+			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json_v2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -347,6 +351,20 @@
 						"type": "SecureString",
 						"value": "[parameters('LS_adls_data_engineering_accountKey')]"
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_asql_data_engineeering_metadat')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to the metadata database",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_asql_data_engineeering_metadat_connectionString')]"
 				}
 			},
 			"dependsOn": []
