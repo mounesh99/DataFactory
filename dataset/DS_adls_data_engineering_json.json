@@ -1,0 +1,21 @@
+{
+	"name": "DS_adls_data_engineering_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_webstpre_gen2",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "webstore"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "webdevelopment"
+			}
+		},
+		"schema": {}
+	}
+}
