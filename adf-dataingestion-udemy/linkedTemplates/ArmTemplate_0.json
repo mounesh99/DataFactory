@@ -1,0 +1,372 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-dataingestion-udemy"
+		},
+		"LS_abls_buyalot_webstore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_abls_buyalot_webstore'"
+		},
+		"LS_adls_data_engineering_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_adls_data_engineering'"
+		},
+		"ls_webstpre_gen2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_webstpre_gen2'"
+		},
+		"LS_adls_data_engineering_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdataengineeringudemy.dfs.core.windows.net/"
+		},
+		"ls_webstpre_gen2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdataengineeringudemy.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_abls_buyalot_webstore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to the buyalotwebsites data",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_abls_buyalot_webstore_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_adls_data_engineering')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_adls_data_engineering_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_adls_data_engineering_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_webstpre_gen2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_webstpre_gen2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_webstpre_gen2_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_abls_buyalot_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_abls_buyalot_webstore",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "webstore"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "onlinesales.json",
+						"container": "sales"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"SalesOrderNumber": {
+							"type": "string"
+						},
+						"SalesOrderLineNumber": {
+							"type": "integer"
+						},
+						"RevisionNumber": {
+							"type": "integer"
+						},
+						"OrderQuantity": {
+							"type": "integer"
+						},
+						"ProductCode": {
+							"type": "string"
+						},
+						"PromotionsCode": {
+							"type": "integer"
+						},
+						"CurrencyCode": {
+							"type": "string"
+						},
+						"UnitPrice": {
+							"type": "number"
+						},
+						"ExtendedAmount": {
+							"type": "number"
+						},
+						"UnitPriceDiscountPct": {
+							"type": "number"
+						},
+						"DiscountAmount": {
+							"type": "number"
+						},
+						"ProductStandardCost": {
+							"type": "number"
+						},
+						"TotalProductCost": {
+							"type": "number"
+						},
+						"SalesAmount": {
+							"type": "number"
+						},
+						"TaxAmt": {
+							"type": "number"
+						},
+						"Freight": {
+							"type": "number"
+						},
+						"CustomerCode": {
+							"type": "string"
+						},
+						"Region": {
+							"type": "string"
+						},
+						"Country": {
+							"type": "string"
+						},
+						"OrderDate": {
+							"type": "string"
+						},
+						"DueDate": {
+							"type": "string"
+						},
+						"ShipDate": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_abls_buyalot_webstore')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_adls_data_engineering_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_webstpre_gen2",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "webstore"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "webdevelopment"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_webstpre_gen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copy_dat",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_abls_buyalot_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_adls_data_engineering_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_abls_buyalot_json')]",
+				"[concat(variables('factoryId'), '/datasets/DS_adls_data_engineering_json')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copy_dat",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_abls_buyalot_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_adls_data_engineering_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "send email",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "copy_dat",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:00:10",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-71.eastus.logic.azure.com:443/workflows/10701d0c4e2f4cdba015ea21bff839c1/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=T5FF_jtnWbeY00Ai9-3nkPjLJL7PWzjBLkdEbuZVY5k",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@json(concat('{\n    \"emailAddress\":\"mounesh97411@gmail.com\",\n    \"subject\":\"ADF Pipeline(PL_Data_Ingestion_Json)\",\n    \"messageBody\":\"Ingestion of Web Store Data into the Data Lake has been completed succesfully\"\n}'))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_abls_buyalot_json')]",
+				"[concat(variables('factoryId'), '/datasets/DS_adls_data_engineering_json')]"
+			]
+		}
+	]
+}
