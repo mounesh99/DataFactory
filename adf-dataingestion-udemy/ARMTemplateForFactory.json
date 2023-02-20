@@ -37,6 +37,125 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_Util_send_email_notification')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is a utility pipeline that sends email notifications.",
+				"activities": [
+					{
+						"name": "Get Email Addresses",
+						"description": "Get the Email Recipients for a specific system code and dataset name ",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:10:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[GetEmailAddresses]",
+								"storedProcedureParameters": {
+									"DatasetName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.datasetName",
+											"type": "Expression"
+										}
+									},
+									"SystemCode": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.systemCode",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_asql_email_address",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach Email Address",
+						"description": "Send a Message to each email address",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Email Addresses",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Email Addresses').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "send email",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:00:10",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://prod-71.eastus.logic.azure.com:443/workflows/10701d0c4e2f4cdba015ea21bff839c1/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=T5FF_jtnWbeY00Ai9-3nkPjLJL7PWzjBLkdEbuZVY5k",
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "@json(concat('{\n    \"emailAddress\":\"',item().emailAddress,'\",\n    \"subject\":\"ADF Pipeline(PL_Data_Ingestion_Json)\",\n    \"messageBody\":\"Ingestion of Web Store Data into the Data Lake has been completed succesfully\"\n}'))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"systemCode": {
+						"type": "string",
+						"defaultValue": "OWS"
+					},
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "Sales"
+					}
+				},
+				"folder": {
+					"name": "Utlility"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_asql_email_address')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -199,6 +318,115 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_abls_buyalot_json')]",
 				"[concat(variables('factoryId'), '/datasets/DS_adls_data_engineering_json')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json_v3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copy_dat",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_abls_buyalot_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_adls_data_engineering_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Send Email Notification",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "copy_dat",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_Util_send_email_notification",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"systemCode": {
+									"value": "@pipeline().parameters.systemCode",
+									"type": "Expression"
+								},
+								"datasetName": {
+									"value": "@pipeline().parameters.datasetName",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"systemCode": {
+						"type": "string",
+						"defaultValue": "OWS"
+					},
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "Sales"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_abls_buyalot_json')]",
+				"[concat(variables('factoryId'), '/datasets/DS_adls_data_engineering_json')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_Util_send_email_notification')]"
 			]
 		},
 		{
