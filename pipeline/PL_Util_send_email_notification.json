@@ -81,7 +81,7 @@
 								"url": "https://prod-71.eastus.logic.azure.com:443/workflows/10701d0c4e2f4cdba015ea21bff839c1/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=T5FF_jtnWbeY00Ai9-3nkPjLJL7PWzjBLkdEbuZVY5k",
 								"method": "POST",
 								"body": {
-									"value": "@json(concat('{\n    \"emailAddress\":\"',item().emailAddress,'\",\n    \"subject\":\"ADF Pipeline(PL_Data_Ingestion_Json)\",\n    \"messageBody\":\"Ingestion of Web Store Data into the Data Lake has been completed succesfully\"\n}'))",
+									"value": "@json(concat('{\n    \"emailAddress\":\"',item().emailAddress,'\",\n    \"subject\":\"',pipeline().parameters.subject,'\",\n    \"messageBody\":\"',pipeline().parameters.message,'\"\n}'))",
 									"type": "Expression"
 								}
 							}
@@ -98,6 +98,12 @@
 			"datasetName": {
 				"type": "string",
 				"defaultValue": "Sales"
+			},
+			"subject": {
+				"type": "string"
+			},
+			"message": {
+				"type": "string"
 			}
 		},
 		"folder": {
