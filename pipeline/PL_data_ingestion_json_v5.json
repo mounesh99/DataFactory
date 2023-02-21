@@ -81,7 +81,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "v_status",
-					"value": "Failed"
+					"value": "failed"
 				}
 			},
 			{
@@ -170,7 +170,7 @@
 							"value": "@pipeline().parameters.runID",
 							"type": "Expression"
 						},
-						"sourceToTargetID": "2",
+						"sourceToTargetID": "5",
 						"pipelineTriggerTime": {
 							"value": "@convertFromUtc(pipeline().TriggerTime,'Indian Standard Time')",
 							"type": "Expression"
