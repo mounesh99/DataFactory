@@ -768,7 +768,7 @@
 								},
 								"sourceToTargetID": "2",
 								"pipelineTriggerTime": {
-									"value": "@pipeline().TriggerTime",
+									"value": "@convertFromUtc(pipeline().TriggerTime,'Indian Standard Time')",
 									"type": "Expression"
 								},
 								"pipelineID": {
@@ -823,7 +823,7 @@
 								},
 								"sourceToTargetID": "2",
 								"pipelineTriggerTime": {
-									"value": "@pipeline().TriggerTime",
+									"value": "@convertFromUtc(pipeline().TriggerTime,'Indian Standard Time')",
 									"type": "Expression"
 								},
 								"pipelineID": {
