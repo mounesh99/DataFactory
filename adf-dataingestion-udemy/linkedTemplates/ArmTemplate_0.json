@@ -879,6 +879,586 @@
 				"[concat(variables('factoryId'), '/pipelines/PL_Util_send_email_notification')]",
 				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_util_set_status_messages')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Sets the status message from a calling pipeline and constructs a subject and  a message ",
+				"activities": [
+					{
+						"name": "Switch Status",
+						"description": "Construct a message and subject depending  on the supplied status of either 'Success or Failed'",
+						"type": "Switch",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@pipeline().parameters.status",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "Success",
+									"activities": [
+										{
+											"name": "PL_Util_send_email_notification",
+											"type": "ExecutePipeline",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "PL_Util_send_email_notification",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {}
+											}
+										},
+										{
+											"name": "Send Email Notifications -Success messages",
+											"type": "ExecutePipeline",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "PL_Util_send_email_notification",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {
+													"systemCode": {
+														"value": "@pipeline().parameters.systemCode",
+														"type": "Expression"
+													},
+													"datasetName": {
+														"value": "@pipeline().parameters.datasetName",
+														"type": "Expression"
+													},
+													"subject": {
+														"value": "@concat('ADF pipeline:',pipeline().parameters.triggeredPipeline)",
+														"type": "Expression"
+													},
+													"message": {
+														"value": "@concat(pipeline().parameters.triggeredPipeline,'has  completed succcessfuly')",
+														"type": "Expression"
+													}
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "failed",
+									"activities": [
+										{
+											"name": "Send Email Notifications -failed messages",
+											"type": "ExecutePipeline",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "PL_Util_send_email_notification",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {
+													"systemCode": {
+														"value": "@pipeline().parameters.systemCode",
+														"type": "Expression"
+													},
+													"datasetName": {
+														"value": "@pipeline().parameters.datasetName",
+														"type": "Expression"
+													},
+													"subject": {
+														"value": "@concat('ADF pipeline:',pipeline().parameters.triggeredPipeline)",
+														"type": "Expression"
+													},
+													"message": {
+														"value": "@concat(pipeline().parameters.triggeredPipeline,'has  completed failed please check logs')",
+														"type": "Expression"
+													}
+												}
+											}
+										}
+									]
+								}
+							],
+							"defaultActivities": [
+								{
+									"name": "Send Email Notifications -Default_messages",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "PL_Util_send_email_notification",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"systemCode": {
+												"value": "@pipeline().parameters.systemCode",
+												"type": "Expression"
+											},
+											"datasetName": {
+												"value": "@pipeline().parameters.datasetName",
+												"type": "Expression"
+											},
+											"subject": {
+												"value": "@concat('ADF pipeline:',pipeline().parameters.triggeredPipeline)",
+												"type": "Expression"
+											},
+											"message": {
+												"value": "@concat(pipeline().parameters.triggeredPipeline,'has no valid status',pipeline().parameters.status,'expecting Failed or Success')",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"status": {
+						"type": "string"
+					},
+					"triggeredPipeline": {
+						"type": "string"
+					},
+					"systemCode": {
+						"type": "string"
+					},
+					"datasetName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Utlility"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_Util_send_email_notification')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_util_log_pipeline_metadata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Log Pipeline Run information(metadata)",
+				"activities": [
+					{
+						"name": "Log Pipeline Run Information metadata",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:10:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[InsertPipelineLog]",
+							"storedProcedureParameters": {
+								"EndTime": {
+									"value": {
+										"value": "@convertFromUtc(utcnow(),'India Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"PipelineID": {
+									"value": {
+										"value": "@pipeline().parameters.pipelineID",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"PipelineName": {
+									"value": {
+										"value": "@pipeline().parameters.pipelineNAME",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RunID": {
+									"value": {
+										"value": "@pipeline().parameters.runID",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SnapshotDate": {
+									"value": {
+										"value": "@pipeline().parameters.snapshotDate",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"SourceToTargetID": {
+									"value": {
+										"value": "@pipeline().parameters.sourceToTargetID",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"StartTime": {
+									"value": {
+										"value": "@pipeline().parameters.pipelineTriggerTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"Status": {
+									"value": {
+										"value": "@pipeline().parameters.status",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"UpdateAt": {
+									"value": {
+										"value": "@convertFromUtc(utcnow(),'India Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LS_asql_data_engineeering_metadat",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "set status and send message",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Log Pipeline Run Information metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_util_set_status_messages",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"status": {
+									"value": "@pipeline().parameters.status",
+									"type": "Expression"
+								},
+								"triggeredPipeline": {
+									"value": "@pipeline().parameters.pipelineNAME",
+									"type": "Expression"
+								},
+								"systemCode": {
+									"value": "@pipeline().parameters.systemCode",
+									"type": "Expression"
+								},
+								"datasetName": {
+									"value": "@pipeline().parameters.datasetName",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"snapshotDate": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"runID": {
+						"type": "string"
+					},
+					"sourceToTargetID": {
+						"type": "string"
+					},
+					"pipelineTriggerTime": {
+						"type": "string"
+					},
+					"pipelineID": {
+						"type": "string"
+					},
+					"pipelineNAME": {
+						"type": "string"
+					},
+					"systemCode": {
+						"type": "string"
+					},
+					"datasetName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Utlility"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_util_set_status_messages')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_data_ingestion_json_v5')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copy_dat",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_abls_buyalot_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_adls_data_engineering_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Set Success Status",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "copy_dat",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "v_status",
+							"value": "Success"
+						}
+					},
+					{
+						"name": "Set failed Status",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "copy_dat",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "v_status",
+							"value": "Failed"
+						}
+					},
+					{
+						"name": "Log Pipeline Metadat Success",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Set Success Status",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_util_log_pipeline_metadata",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"snapshotDate": {
+									"value": "@formatDateTime(pipeline().parameters.snapshotData,'yyyy-MM-dd')",
+									"type": "Expression"
+								},
+								"status": {
+									"value": "@variables('v_status')",
+									"type": "Expression"
+								},
+								"runID": {
+									"value": "@pipeline().parameters.runID",
+									"type": "Expression"
+								},
+								"sourceToTargetID": "2",
+								"pipelineTriggerTime": {
+									"value": "@pipeline().TriggerTime",
+									"type": "Expression"
+								},
+								"pipelineID": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"pipelineNAME": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								},
+								"systemCode": {
+									"value": "@pipeline().parameters.systemCode",
+									"type": "Expression"
+								},
+								"datasetName": {
+									"value": "@pipeline().parameters.datasetName",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Log Pipeline Metadat Failed",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Set failed Status",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_util_log_pipeline_metadata",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"snapshotDate": {
+									"value": "@formatDateTime(pipeline().parameters.snapshotData,'yyyy-MM-dd')",
+									"type": "Expression"
+								},
+								"status": {
+									"value": "@variables('v_status')",
+									"type": "Expression"
+								},
+								"runID": {
+									"value": "@pipeline().parameters.runID",
+									"type": "Expression"
+								},
+								"sourceToTargetID": "2",
+								"pipelineTriggerTime": {
+									"value": "@pipeline().TriggerTime",
+									"type": "Expression"
+								},
+								"pipelineID": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"pipelineNAME": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								},
+								"systemCode": {
+									"value": "@pipeline().parameters.systemCode",
+									"type": "Expression"
+								},
+								"datasetName": {
+									"value": "@pipeline().parameters.datasetName",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"systemCode": {
+						"type": "string",
+						"defaultValue": "OWS"
+					},
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "Sales"
+					},
+					"runID": {
+						"type": "string",
+						"defaultValue": "1"
+					},
+					"snapshotData": {
+						"type": "string",
+						"defaultValue": "2023-02-20"
+					}
+				},
+				"variables": {
+					"v_status": {
+						"type": "String",
+						"defaultValue": "Success"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_abls_buyalot_json')]",
+				"[concat(variables('factoryId'), '/datasets/DS_adls_data_engineering_json')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_util_log_pipeline_metadata')]"
+			]
 		}
 	]
 }
