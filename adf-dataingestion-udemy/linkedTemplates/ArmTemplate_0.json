@@ -315,57 +315,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_asql_email_address')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_asql_data_engineeering_metadat",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "metadata"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "SystemCode",
-						"type": "varchar"
-					},
-					{
-						"name": "DatasetName",
-						"type": "varchar"
-					},
-					{
-						"name": "SystemInfoID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "FirstName",
-						"type": "varchar"
-					},
-					{
-						"name": "LastName",
-						"type": "varchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "EmailRecipients"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_asql_source_to_target_details')]",
+			"name": "[concat(parameters('factoryName'), '/DS_asql_batch_details')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -451,7 +401,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "SourceToTargetView"
+					"table": "BatchRun"
 				}
 			},
 			"dependsOn": [
@@ -459,7 +409,57 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_asql_source_to_target_details_copy1')]",
+			"name": "[concat(parameters('factoryName'), '/DS_asql_email_address')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_asql_data_engineeering_metadat",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "metadata"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SystemCode",
+						"type": "varchar"
+					},
+					{
+						"name": "DatasetName",
+						"type": "varchar"
+					},
+					{
+						"name": "SystemInfoID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FirstName",
+						"type": "varchar"
+					},
+					{
+						"name": "LastName",
+						"type": "varchar"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "EmailRecipients"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_asql_source_to_target_details')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
