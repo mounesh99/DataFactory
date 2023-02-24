@@ -1594,6 +1594,100 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_asql_source_to_target_details')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_asql_data_engineeering_metadat",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "metadata"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SourceToTargetID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SourceSystemCode",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceSystem",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceDatasetName",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceDataObjectName",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceContainer",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceRelativePathSchema",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceTechnicalName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetSystemCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetSystem",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetDatasetName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetDataObjectName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetContainer",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetRelativePathSchema",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetTechnicalName",
+						"type": "varchar"
+					},
+					{
+						"name": "Stage",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "SourceToTargetView"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_abls_buyalot_webstore')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1654,6 +1748,100 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_asql_source_to_target_details_copy1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_asql_data_engineeering_metadat",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "metadata"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SourceToTargetID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SourceSystemCode",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceSystem",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceDatasetName",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceDataObjectName",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceContainer",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceRelativePathSchema",
+						"type": "varchar"
+					},
+					{
+						"name": "SourceTechnicalName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetSystemCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetSystem",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetDatasetName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetDataObjectName",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetContainer",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetRelativePathSchema",
+						"type": "varchar"
+					},
+					{
+						"name": "TargetTechnicalName",
+						"type": "varchar"
+					},
+					{
+						"name": "Stage",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "SourceToTargetView"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_asql_data_engineeering_metadat')]"
+			]
 		}
 	]
 }
