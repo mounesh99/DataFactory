@@ -1,0 +1,37 @@
+{
+	"name": "pl_aggregate_demo",
+	"properties": {
+		"activities": [
+			{
+				"name": "AggregateDemo",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_aggregate_demo",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "AggregateDemo"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-10-19T06:24:32Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

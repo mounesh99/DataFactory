@@ -1,0 +1,37 @@
+{
+	"name": "pl_surrogate_key_Demo",
+	"properties": {
+		"activities": [
+			{
+				"name": "dfSurrogateKeyDemo",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_surrogate_key_Demo",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "SurrogateKeyDemo"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-10-19T06:31:33Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

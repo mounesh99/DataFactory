@@ -1,0 +1,9 @@
+{
+	"name": "adf-cloudguru-lab",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "60bbf9c1-8d5a-4050-a9b4-b8037c3f74a2",
+		"tenantId": "84f1e4ea-8554-43e1-8709-f0b8589ea118"
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"name": "pl_join_demo",
+	"properties": {
+		"activities": [
+			{
+				"name": "JointEmployeDepartmentTable",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_join_demo",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "JoinDemo"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-10-19T05:13:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

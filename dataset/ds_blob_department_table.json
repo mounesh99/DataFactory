@@ -1,0 +1,36 @@
+{
+	"name": "ds_blob_department_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_employee_table",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "JoinDemo"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "departments.csv",
+				"container": "source"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DepartmentID",
+				"type": "String"
+			},
+			{
+				"name": "DepartmentName",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

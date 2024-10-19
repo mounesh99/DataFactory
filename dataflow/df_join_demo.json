@@ -1,0 +1,69 @@
+{
+	"name": "df_join_demo",
+	"properties": {
+		"folder": {
+			"name": "JoinDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_table",
+						"type": "DatasetReference"
+					},
+					"name": "SrEemployeTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_blob_department_table",
+						"type": "DatasetReference"
+					},
+					"name": "SrDepartmenTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "JoinResultStoreInBlobDestination"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinTwoTable"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmployeeID as string,",
+				"          Name as string,",
+				"          DepartmentID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrEemployeTable",
+				"source(output(",
+				"          DepartmentID as string,",
+				"          DepartmentName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrDepartmenTable",
+				"SrEemployeTable, SrDepartmenTable join(SrEemployeTable@DepartmentID == SrDepartmenTable@DepartmentID,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinTwoTable",
+				"JoinTwoTable sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['EmployeDepartmentTable.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> JoinResultStoreInBlobDestination"
+			]
+		}
+	}
+}

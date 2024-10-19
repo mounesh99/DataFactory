@@ -1,0 +1,59 @@
+{
+	"name": "df_aggregate_demo",
+	"properties": {
+		"folder": {
+			"name": "AggregateDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_sql",
+						"type": "DatasetReference"
+					},
+					"name": "SrEmployeeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "DestinationAggregate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AggregateEmployeTable"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as float,",
+				"          COMM as string,",
+				"          DEPTNO as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrEmployeeTable",
+				"SrEmployeeTable aggregate(groupBy(DEPTNO),",
+				"     MAXSAL = max(SAL),",
+				"          AVGSAL = avg(SAL),",
+				"          TotalEmployee = count(EMPNO)) ~> AggregateEmployeTable",
+				"AggregateEmployeTable sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['AggregateResult.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DestinationAggregate"
+			]
+		}
+	}
+}
