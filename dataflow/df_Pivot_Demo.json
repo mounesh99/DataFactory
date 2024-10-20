@@ -1,0 +1,60 @@
+{
+	"name": "df_Pivot_Demo",
+	"properties": {
+		"folder": {
+			"name": "PivotDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_sql",
+						"type": "DatasetReference"
+					},
+					"name": "actGetEmployeeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "actsinkpivotedresulttodestination"
+				}
+			],
+			"transformations": [
+				{
+					"name": "pivot1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as string,",
+				"          COMM as string,",
+				"          DEPTNO as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> actGetEmployeeTable",
+				"actGetEmployeeTable pivot(groupBy(DEPTNO),",
+				"     pivotBy(JOB),",
+				"     {} = count(EMPNO),",
+				"     columnNaming: '$N$V',",
+				"     lateral: true) ~> pivot1",
+				"pivot1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['pivotedResult.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> actsinkpivotedresulttodestination"
+			]
+		}
+	}
+}
