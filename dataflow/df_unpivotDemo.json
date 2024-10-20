@@ -47,7 +47,7 @@
 				"     ),",
 				"     ungroupBy(DEPTNO),",
 				"     lateral: true,",
-				"     ignoreNullPivots: false) ~> unpivotActivity",
+				"     ignoreNullPivots: true) ~> unpivotActivity",
 				"unpivotActivity sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['UnpivoteResutl.csv'],",
