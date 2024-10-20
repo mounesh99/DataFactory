@@ -1,0 +1,60 @@
+{
+	"name": "df_unpivotDemo",
+	"properties": {
+		"folder": {
+			"name": "UnpivotDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_pivoted_employee_table",
+						"type": "DatasetReference"
+					},
+					"name": "SrPivoteEmployeeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "srSinkDestination"
+				}
+			],
+			"transformations": [
+				{
+					"name": "unpivotActivity"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          DEPTNO as string,",
+				"          ANALYST as string,",
+				"          CLERK as string,",
+				"          MANAGER as string,",
+				"          PRESIDENT as string,",
+				"          SALESMAN as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrPivoteEmployeeTable",
+				"SrPivoteEmployeeTable unpivot(output(",
+				"          JOB as string,",
+				"          Count as string",
+				"     ),",
+				"     ungroupBy(DEPTNO),",
+				"     lateral: true,",
+				"     ignoreNullPivots: false) ~> unpivotActivity",
+				"unpivotActivity sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['UnpivoteResutl.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> srSinkDestination"
+			]
+		}
+	}
+}

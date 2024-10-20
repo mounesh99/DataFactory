@@ -1,0 +1,51 @@
+{
+	"name": "ds_blob_pivoted_employee_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_employee_table",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "UnpivotDemo"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "pivotedResult.csv",
+				"container": "destination"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DEPTNO",
+				"type": "String"
+			},
+			{
+				"name": "ANALYST",
+				"type": "String"
+			},
+			{
+				"name": "CLERK",
+				"type": "String"
+			},
+			{
+				"name": "MANAGER",
+				"type": "String"
+			},
+			{
+				"name": "PRESIDENT",
+				"type": "String"
+			},
+			{
+				"name": "SALESMAN",
+				"type": "String"
+			}
+		]
+	}
+}
