@@ -1,0 +1,57 @@
+{
+	"name": "df_derived_Column_Demo",
+	"properties": {
+		"folder": {
+			"name": "DerviedColumnDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_sql",
+						"type": "DatasetReference"
+					},
+					"name": "SrEmployeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sinkdervivedColumn"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedDepartmentNumberInString"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as string,",
+				"          COMM as string,",
+				"          DEPTNO as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrEmployeTable",
+				"SrEmployeTable derive(DepInString = case(DEPTNO==10,'Ten',case(DEPTNO==20,'Twenty','Thirty')),",
+				"          COMM = iif(isNull(COMM),'unknow',COMM)) ~> derivedDepartmentNumberInString",
+				"derivedDepartmentNumberInString sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['DervivedColumn.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkdervivedColumn"
+			]
+		}
+	}
+}
