@@ -1,0 +1,58 @@
+{
+	"name": "df_rank_demo",
+	"properties": {
+		"folder": {
+			"name": "RankDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_sql",
+						"type": "DatasetReference"
+					},
+					"name": "SrEmployeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sinkDestinationContainer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "rankOnSal"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as float,",
+				"          COMM as string,",
+				"          DEPTNO as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrEmployeTable",
+				"SrEmployeTable rank(desc(SAL, true),",
+				"     output(Rank as long),",
+				"     dense: true) ~> rankOnSal",
+				"rankOnSal sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['RankResult.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkDestinationContainer"
+			]
+		}
+	}
+}
