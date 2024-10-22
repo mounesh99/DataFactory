@@ -1,0 +1,56 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"folder": {
+			"name": "FilterDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_employe_sql",
+						"type": "DatasetReference"
+					},
+					"name": "SrEmployeeTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_join_result_destination_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sinkDestination"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filterDemo"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as string,",
+				"          COMM as string,",
+				"          DEPTNO as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrEmployeeTable",
+				"SrEmployeeTable filter(DEPTNO == 10) ~> filterDemo",
+				"filterDemo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['filterDemo.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkDestination"
+			]
+		}
+	}
+}
