@@ -1,0 +1,49 @@
+{
+	"name": "ds_blob_sample_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_employee_table",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "FlattenDemo"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "sample_data_new.json",
+				"container": "source"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer"
+				},
+				"name": {
+					"type": "string"
+				},
+				"age": {
+					"type": "integer"
+				},
+				"address": {
+					"type": "object",
+					"properties": {
+						"street": {
+							"type": "string"
+						},
+						"city": {
+							"type": "string"
+						},
+						"state": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	}
+}
