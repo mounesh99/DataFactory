@@ -1,0 +1,64 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"folder": {
+			"name": "FlattenDemo"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_blob_sample_json",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_blob_sample_json",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          name as string,",
+				"          age as integer,",
+				"          address as (street as string, city as string, state as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source1",
+				"source(output(",
+				"          id as integer,",
+				"          name as string,",
+				"          age as integer,",
+				"          address as (street as string, city as string, state as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source2",
+				"source2 foldDown(unroll(),",
+				"     mapColumn(",
+				"          id,",
+				"          name,",
+				"          age,",
+				"          address = address",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
+			]
+		}
+	}
+}
