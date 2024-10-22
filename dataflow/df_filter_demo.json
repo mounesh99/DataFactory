@@ -1,5 +1,5 @@
 {
-	"name": "dataflow2",
+	"name": "df_filter_demo",
 	"properties": {
 		"folder": {
 			"name": "FilterDemo"
@@ -36,14 +36,14 @@
 				"          JOB as string,",
 				"          MGR as string,",
 				"          HIREDATE as string,",
-				"          SAL as string,",
+				"          SAL as float,",
 				"          COMM as string,",
 				"          DEPTNO as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SrEmployeeTable",
-				"SrEmployeeTable filter(DEPTNO == 10) ~> filterDemo",
+				"SrEmployeeTable filter(DEPTNO == 10 && SAL > 1500) ~> filterDemo",
 				"filterDemo sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['filterDemo.csv'],",
