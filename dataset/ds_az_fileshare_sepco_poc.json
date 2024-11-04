@@ -1,0 +1,42 @@
+{
+	"name": "ds_az_fileshare_sepco_poc",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_az_fileshare",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"filesharename": "sepco",
+				"storageaccount": "azstcloudgurulab"
+			}
+		},
+		"parameters": {
+			"filesharename": {
+				"type": "string",
+				"defaultValue": "/sepco/drop"
+			},
+			"path": {
+				"type": "string",
+				"defaultValue": "/drop"
+			}
+		},
+		"folder": {
+			"name": "SEPCOPOC"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureFileStorageLocation",
+				"folderPath": {
+					"value": "@dataset().path",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
