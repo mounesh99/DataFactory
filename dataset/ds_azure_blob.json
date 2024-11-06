@@ -1,0 +1,33 @@
+{
+	"name": "ds_azure_blob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_az_blob_source",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ds_pa_containerName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "RealTimeScenarios"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": {
+					"value": "@dataset().ds_pa_containerName",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
