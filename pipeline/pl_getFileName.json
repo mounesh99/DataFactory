@@ -74,6 +74,7 @@
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
+										"wildcardFileName": "*",
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -124,7 +125,7 @@
 											"type": "Expression"
 										},
 										"filename": {
-											"value": "@concat('FileNamre',item().name)",
+											"value": "@concat('Test',item().name)",
 											"type": "Expression"
 										}
 									}
