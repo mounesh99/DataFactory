@@ -125,7 +125,7 @@
 											"type": "Expression"
 										},
 										"filename": {
-											"value": "@concat('Test',item().name)",
+											"value": "@concat(item().name,formatDateTime(utcNow(),'yyyyMMddHHmmss'))",
 											"type": "Expression"
 										}
 									}
