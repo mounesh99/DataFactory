@@ -116,11 +116,15 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ds_azure_blob",
+									"referenceName": "ds_azure_blob_destination",
 									"type": "DatasetReference",
 									"parameters": {
 										"ds_pa_containerName": {
 											"value": "@pipeline().parameters.destinationContainerName",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@concat('FileNamre',item().name)",
 											"type": "Expression"
 										}
 									}
