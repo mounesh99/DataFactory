@@ -54,6 +54,7 @@
 						"value": "@activity('actGetMetaData').output.childItems",
 						"type": "Expression"
 					},
+					"isSequential": true,
 					"activities": [
 						{
 							"name": "actAppendFileName",
@@ -70,6 +71,30 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "actSetSecondFileName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "actGetAllFileName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "varSeconfFileName",
+					"value": {
+						"value": "@variables('varListOfFileName')[0]",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -85,6 +110,9 @@
 		"variables": {
 			"varListOfFileName": {
 				"type": "Array"
+			},
+			"varSeconfFileName": {
+				"type": "String"
 			}
 		},
 		"folder": {
