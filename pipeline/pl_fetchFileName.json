@@ -1,0 +1,54 @@
+{
+	"name": "pl_fetchFileName",
+	"properties": {
+		"activities": [
+			{
+				"name": "actGetMetaData",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_azure_blob",
+						"type": "DatasetReference",
+						"parameters": {
+							"ds_pa_containerName": {
+								"value": "@pipeline().parameters.pa_sourceContainerName",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pa_sourceContainerName": {
+				"type": "string",
+				"defaultValue": "source"
+			},
+			"pa_destinationContainerName": {
+				"type": "string",
+				"defaultValue": "destination"
+			}
+		},
+		"folder": {
+			"name": "RealTimeCase"
+		},
+		"annotations": []
+	}
+}
