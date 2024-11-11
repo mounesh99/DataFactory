@@ -36,6 +36,40 @@
 						"type": "DelimitedTextReadSettings"
 					}
 				}
+			},
+			{
+				"name": "actGetAllFileName",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "actGetMetaData",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('actGetMetaData').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "actAppendFileName",
+							"type": "AppendVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "varListOfFileName",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
 			}
 		],
 		"parameters": {
@@ -46,6 +80,11 @@
 			"pa_destinationContainerName": {
 				"type": "string",
 				"defaultValue": "destination"
+			}
+		},
+		"variables": {
+			"varListOfFileName": {
+				"type": "Array"
 			}
 		},
 		"folder": {
