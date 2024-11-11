@@ -2,7 +2,7 @@
 	"name": "df_window_demo",
 	"properties": {
 		"folder": {
-			"name": "WindowDemo"
+			"name": "UnpivotDemo/WindowDemo"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
