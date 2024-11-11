@@ -31,11 +31,41 @@
 				}
 			},
 			{
-				"name": "actAssignXToY",
+				"name": "actAssignToTemp",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "actSetVariableY",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "actSetVariableX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "temp",
+					"value": {
+						"value": "@add(int(variables('x')),1)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "actAssignTempToX",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "actAssignToTemp",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -49,7 +79,7 @@
 				"typeProperties": {
 					"variableName": "x",
 					"value": {
-						"value": "@variables('y')",
+						"value": "@variables('temp')",
 						"type": "Expression"
 					}
 				}
@@ -60,6 +90,9 @@
 				"type": "String"
 			},
 			"y": {
+				"type": "String"
+			},
+			"temp": {
 				"type": "String"
 			}
 		},
